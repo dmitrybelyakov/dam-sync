@@ -22,7 +22,10 @@ www.esproj
 /include
 /man
 
-# Project ignores
+# Build ignores
+/build
+/dist
+/*.egg-info
 
 
 

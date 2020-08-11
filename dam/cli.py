@@ -24,41 +24,59 @@ def cli():
 # -----------------------------------------------------------------------------
 
 @cli.command(name='build')
-def build():
+@click.option('--initial/--normal', default=False)
+def build(initial=False):
     """ Build release """
     print(yellow('\nBuilding release: v{}'.format(version)))
     print(yellow('-' * 80))
 
-    # check version
+    # package name
     package = 'dam-sync'
-    package = 'shiftboiler'
-    resp = requests.get('https://pypi.org/pypi/{}/json'.format(package))
-    if resp.status_code == 404:
-        print(red('Package "{}" does not exist on PyPI\n'.format(package)))
-        return
 
-    info = resp.json()
-    latest = info['info']['version']
-    all = list(info['releases'].keys())
-    all.append(latest)
-    releases = [release.lstrip('v') for release in all]
-    if version in releases:
-        err = 'Package "{}" already has a version "{}" published to PyPI.\n'
-        print(red(err.format(package, version)))
-        return
+    # check version
+    if not initial:
+        resp = requests.get('https://pypi.org/pypi/{}/json'.format(package))
+        if resp.status_code == 404:
+            print(red('Package "{}" does not exist on PyPI\n'.format(package)))
+            return
 
-
-
+        info = resp.json()
+        latest = info['info']['version']
+        all = list(info['releases'].keys())
+        all.append(latest)
+        releases = [release.lstrip('v') for release in all]
+        if version in releases:
+            err = 'Package "{}" already has a version "{}" published to PyPI.\n'
+            print(red(err.format(package, version)))
+            return
 
     # cleanup
+    print(green('REMOVING OLD BUILD'))
     cwd = os.getcwd()
     build = os.path.join(cwd, 'build')
     dist = os.path.join(cwd, 'dist')
-    egg = os.path.join(cwd, 'dist')
-    print(green('Cleanup: OK'))
+    egg = os.path.join(cwd, 'dam_sync.egg-info')
+    for dir in [build, dist, egg]:
+        if os.path.exists(dir):
+            shutil.rmtree(dir)
+    print('success\n')
+
 
 
     # setuptools
+    print(green('Running setup.py clean:'))
+    subprocess.run(['python', 'setup.py', 'clean'])
+    print()
+
+    print(green('Building distribution:'))
+    subprocess.run(['python', 'setup.py', 'sdist'])
+    print()
+
+    print(green('Building wheel:'))
+    subprocess.run(['python', 'setup.py', 'bdist_wheel', '--python-tag=py3'])
+    print()
+
+    print(green('BUILD SUCCESSFUL\n'))
 
 
 
