@@ -1,0 +1,6 @@
+#!/usr/bin/env python3
+from dam.cli import cli as dev_cli
+
+# and run
+dev_cli()
+
