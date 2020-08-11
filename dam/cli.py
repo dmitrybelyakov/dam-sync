@@ -23,9 +23,16 @@ def cli():
 # Commands
 # -----------------------------------------------------------------------------
 
+# build artifacts
+cwd = os.getcwd()
+build = os.path.join(cwd, 'build')
+dist = os.path.join(cwd, 'dist')
+egg = os.path.join(cwd, 'dam_sync.egg-info')
+
+
 @cli.command(name='build')
 @click.option('--initial/--normal', default=False)
-def build(initial=False):
+def build_project(initial=False):
     """ Build release """
     print(yellow('\nBuilding release: v{}'.format(version)))
     print(yellow('-' * 80))
@@ -51,17 +58,11 @@ def build(initial=False):
             return
 
     # cleanup
-    print(green('REMOVING OLD BUILD'))
-    cwd = os.getcwd()
-    build = os.path.join(cwd, 'build')
-    dist = os.path.join(cwd, 'dist')
-    egg = os.path.join(cwd, 'dam_sync.egg-info')
+    print(green('Removing old build'))
     for dir in [build, dist, egg]:
         if os.path.exists(dir):
             shutil.rmtree(dir)
     print('success\n')
-
-
 
     # setuptools
     print(green('Running setup.py clean:'))
@@ -79,11 +80,19 @@ def build(initial=False):
     print(green('BUILD SUCCESSFUL\n'))
 
 
-
-
 @cli.command(name='publish')
 def publish():
     """ Publish release """
-    print(green('\nPublish release'))
-    print(green('-' * 80))
+    print(yellow('\nPublish release'))
+    print(yellow('-' * 80))
     print()
+    for dir in [build, dist, egg]:
+        if not os.path.exists(dir):
+            err = 'Build artifacts missing. Please build distribution first.\n'
+            print(red(err))
+            return
+
+    print(green('Publishing to PyPI with twine:'))
+    subprocess.run(['twine', 'upload', 'dist/*'])
+    print()
+
