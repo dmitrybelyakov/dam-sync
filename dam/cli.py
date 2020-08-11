@@ -96,3 +96,5 @@ def publish():
     subprocess.run(['twine', 'upload', 'dist/*'])
     print()
 
+    print(green('SUCCESSFULLY PUBLISHED {}\n'.format(version)))
+
