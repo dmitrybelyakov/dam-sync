@@ -15,6 +15,27 @@ As off-site cloud storage is expensive it's recommended to configure your AWS S3
   * [Release notes and Changelog](docs/changelog.md)
 
 
+## Basic usage
+
+After it's installed and configured (see below) it's quite straightforward to use. Backup your library to both attached storage and cloud by running:
+
+```
+dam-sync run
+```
+
+Or you can choose to backup to attached storage only with the `--disk` flag:
+
+```
+dam-sync run --disk
+```
+
+Or only to cloud with the `--cloud` flag:
+
+```
+dam-sync run --cloud
+```
+
+
 ## Installation
 
 This library requires Python3 to rand and is ideal when installed globally. Install it with pip:
