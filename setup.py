@@ -104,7 +104,7 @@ setup(**dict(
     # project dependencies
     install_requires=[
         'click>=7.1.2,<8.0.0',
-        'boto3>=1.14.40,<2.0.0'
+        'PyYAML>=5.3.1,<6.0.0',
     ],
 
     # entry points
