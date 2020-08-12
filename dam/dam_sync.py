@@ -29,16 +29,14 @@ def get_config():
     if not os.path.isdir(config_dir):
         os.makedirs(config_dir)
 
-    return 'lol'
-
     if not os.path.isfile(config_path):
         return None
 
+    with open(config_path) as file:
+        config = json.load(file)
 
-
-    print('GETTING CONFIG', path)
-
-
+    pp(config)
+    return config
 
 
 @cli.command(name='configure')
@@ -72,11 +70,6 @@ def configure(source, destination, s3_bucket, aws_profile):
     print(green('-' * 80))
     print()
 
-    print('SOURCE', source)
-    print('DESTINATION', destination)
-    print('S3 BUCKET', s3_bucket)
-    print('AWS PROFILE', aws_profile)
-
     # check config
     config = get_config()
     if config:
@@ -85,13 +78,19 @@ def configure(source, destination, s3_bucket, aws_profile):
             print(cyan('Skipping...\n'))
             return
 
+    # write config
+    with open(config_path, 'w') as file:
+        config = dict(
+            source=source,
+            destination=destination,
+            s3_bucket=s3_bucket,
+            aws_profile=aws_profile,
+        )
+        json.dump(config, file, indent=True)
 
-    config = dict(
-        source=source,
-        destination=destination,
-        s3_bucket=s3_bucket,
-        aws_profile=aws_profile,
-    )
+    # report success
+    print(green('\nSuccessfully written config to "{}"\n'.format(config_path)))
+    return
 
 
 
