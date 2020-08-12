@@ -3,6 +3,7 @@ import click
 import os
 import yaml
 from dam.colors import *
+import subprocess
 from pprint import pprint as pp
 
 # -----------------------------------------------------------------------------
@@ -36,7 +37,6 @@ def get_config():
     with open(config_path) as file:
         config = yaml.load(file, Loader=yaml.SafeLoader)
 
-    pp(config)
     return config
 
 
@@ -67,7 +67,7 @@ def get_config():
 )
 def configure(source, destination, s3_bucket, aws_profile):
     """ Configure sync"""
-    print(green('\nHello from DAM-Sync!'))
+    print(green('\nConfiguring DAM-Sync!'))
     print(green('-' * 80))
     print()
 
@@ -98,8 +98,12 @@ def configure(source, destination, s3_bucket, aws_profile):
             destination=destination,
             s3_bucket=s3_bucket,
             aws_profile=aws_profile,
+            exclude=[
+                '.DS_Store',
+                '*.DS_Store',
+            ]
         )
-        yaml.dump(config, file)
+        yaml.dump(config, file, default_flow_style=False, sort_keys=False)
 
     # report success
     print(green('\nSuccessfully written config to "{}"\n'.format(config_path)))
@@ -111,8 +115,8 @@ def configure(source, destination, s3_bucket, aws_profile):
 @click.option('--cloud/--skip-cloud', default=False)
 def run(disk, cloud):
     """ Backup your assets """
-    print(green('\nHello from DAM-Sync!'))
-    print(green('-' * 80))
+    print(yellow('\nBacking up your assets'))
+    print(yellow('-' * 80))
     print()
 
     """
@@ -145,12 +149,56 @@ def run(disk, cloud):
     """
     Do the sync
     """
+    config = get_config()
+
+    excludes = config['exclude'] + [
+        '*.lrdata',
+        '*.lrdata/*',
+        '*.lrcat.zip',
+        '*.lock',
+        '*.lock',
+        '*.lrcat-wal',
+        '*.DS_Store',
+        '*/Lightroom/Backups/*',
+    ]
 
     # sync disk
     if sync_disk:
-        print('Syncing to disk')
+        cmd = [
+            'rsync',
+            '-vhrt',
+            config['source'],
+            config['destination'],
+            '--delete',
+        ]
+
+        for x in excludes:
+            cmd.append('--exclude={}'.format(x))
+
+        print(green('Synchronizing with local storage:'))
+        subprocess.run(cmd)
+        print()
 
     # sync cloud
-    if sync_cloud:
-        print('Syncing to S3')
+    # if sync_cloud:
+        # cmd = [
+        #     'aws',
+        #     '--profile={}'.format(config['aws_profile']),
+        #     's3',
+        #     'sync',
+        #     config['source'],
+        #     's3://{}'.format(config['s3_bucket']),
+        #     '--delete'
+        # ]
+        #
+        # for x in excludes:
+        #     cmd.append('--exclude="{}"'.format(x))
+        #
+        # print(green('Synchronizing with S3:'))
+        # # subprocess.run(cmd)
+        # print(' '.join(cmd))
+
+
+    print(green('\nAll done. Your data is safe now. Good job :)\n'))
+    return
 
