@@ -61,7 +61,7 @@ def get_config():
 )
 @click.option(
     '--aws-profile',
-    default=None,
+    default='default',
     prompt=True,
     help='AWS CLI profile to use for authentication'
 )
@@ -78,6 +78,18 @@ def configure(source, destination, s3_bucket, aws_profile):
         if not click.confirm(red('Do you want to continue and overwrite it?')):
             print(cyan('Skipping...\n'))
             return
+
+    # check source
+    if not os.path.isdir(source):
+        print(red('Backup source "{}" doesn\'t exist\n'.format(source)))
+        return
+
+    # check destination
+    if not os.path.isdir(destination):
+        err = 'Backup destination "{}" doesn\'t exist. If it\'s an external '
+        err += 'volume - check that t\'s mounted.\n'
+        print(red(err.format(destination)))
+        return
 
     # write config
     with open(config_path, 'w') as file:
