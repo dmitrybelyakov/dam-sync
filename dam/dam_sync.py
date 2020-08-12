@@ -175,29 +175,27 @@ def run(disk, cloud):
         for x in excludes:
             cmd.append('--exclude={}'.format(x))
 
-        print(green('Synchronizing with local storage:'))
+        print(green('Synchronizing to local storage:'))
         subprocess.run(cmd)
         print()
 
     # sync cloud
-    # if sync_cloud:
-        # cmd = [
-        #     'aws',
-        #     '--profile={}'.format(config['aws_profile']),
-        #     's3',
-        #     'sync',
-        #     config['source'],
-        #     's3://{}'.format(config['s3_bucket']),
-        #     '--delete'
-        # ]
-        #
-        # for x in excludes:
-        #     cmd.append('--exclude="{}"'.format(x))
-        #
-        # print(green('Synchronizing with S3:'))
-        # # subprocess.run(cmd)
-        # print(' '.join(cmd))
+    if sync_cloud:
+        cmd = [
+            'aws',
+            '--profile={}'.format(config['aws_profile']),
+            's3',
+            'sync',
+            config['source'],
+            's3://{}'.format(config['s3_bucket']),
+            '--delete'
+        ]
 
+        for x in excludes:
+            cmd.append('--exclude={}'.format(x))
+
+        print(green('Synchronizing to S3:'))
+        subprocess.run(cmd)
 
     print(green('\nAll done. Your data is safe now. Good job :)\n'))
     return
