@@ -195,6 +195,7 @@ def run(disk, cloud):
             cmd.append('--exclude={}'.format(x))
 
         print(green('Synchronizing to S3:'))
+        print('building file list...')
         subprocess.run(cmd)
 
     print(green('\nAll done. Your data is safe now. Good job :)\n'))
