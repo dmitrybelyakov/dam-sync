@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import click
 import os
-import json
+import yaml
 from dam.colors import *
 from pprint import pprint as pp
 
@@ -20,7 +20,8 @@ def cli():
 # -----------------------------------------------------------------------------
 
 config_dir = os.path.expanduser('~/.dam-sync')
-config_path = os.path.join(config_dir, 'config.json')
+config_path = os.path.join(config_dir, 'config.yml')
+
 
 def get_config():
     """
@@ -33,7 +34,7 @@ def get_config():
         return None
 
     with open(config_path) as file:
-        config = json.load(file)
+        config = yaml.load(file, Loader=yaml.SafeLoader)
 
     pp(config)
     return config
@@ -86,16 +87,11 @@ def configure(source, destination, s3_bucket, aws_profile):
             s3_bucket=s3_bucket,
             aws_profile=aws_profile,
         )
-        json.dump(config, file, indent=True)
+        yaml.dump(config, file)
 
     # report success
     print(green('\nSuccessfully written config to "{}"\n'.format(config_path)))
     return
-
-
-
-
-
 
 
 @cli.command(name='run')
