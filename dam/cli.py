@@ -25,24 +25,29 @@ def cli():
 
 # build artifacts
 cwd = os.getcwd()
-build = os.path.join(cwd, 'build')
-dist = os.path.join(cwd, 'dist')
-egg = os.path.join(cwd, 'dam_sync.egg-info')
+build_dir = os.path.join(cwd, 'build')
+dist_dir = os.path.join(cwd, 'dist')
+egg_dir = os.path.join(cwd, 'dam_sync.egg-info')
+
+
+def cleanup():
+    """ Cleanup build artifacts """
+    for dir in [build_dir, dist_dir, egg_dir]:
+        if os.path.exists(dir):
+            shutil.rmtree(dir)
 
 
 @cli.command(name='clean')
 def clean():
     """ Cleanup build artifacts """
     print(green('Removing old build'))
-    for dir in [build, dist, egg]:
-        if os.path.exists(dir):
-            shutil.rmtree(dir)
+    cleanup()
     print('success\n')
 
 
 @cli.command(name='build')
 @click.option('--initial/--normal', default=False)
-def build_project(initial=False):
+def build(initial=False):
     """ Build release """
     print(yellow('\nBuilding release: v{}'.format(version)))
     print(yellow('-' * 80))
@@ -68,7 +73,7 @@ def build_project(initial=False):
             return
 
     # cleanup
-    clean()
+    cleanup()
 
     # setuptools
     print(green('Running setup.py clean:'))
@@ -83,8 +88,6 @@ def build_project(initial=False):
     subprocess.run(['python', 'setup.py', 'bdist_wheel', '--python-tag=py3'])
     print()
 
-    print(green('BUILD SUCCESSFUL\n'))
-
 
 @cli.command(name='publish')
 def publish():
@@ -92,7 +95,7 @@ def publish():
     print(yellow('\nPublish release'))
     print(yellow('-' * 80))
     print()
-    for dir in [build, dist, egg]:
+    for dir in [build_dir, dist_dir, egg_dir]:
         if not os.path.exists(dir):
             err = 'Build artifacts missing. Please build distribution first.\n'
             print(red(err))
@@ -103,7 +106,7 @@ def publish():
     print()
 
     # cleanup
-    clean()
+    cleanup()
 
     print(green('SUCCESSFULLY PUBLISHED {}\n'.format(version)))
 
