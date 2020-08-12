@@ -30,6 +30,16 @@ dist = os.path.join(cwd, 'dist')
 egg = os.path.join(cwd, 'dam_sync.egg-info')
 
 
+@cli.command(name='clean')
+def clean():
+    """ Cleanup build artifacts """
+    print(green('Removing old build'))
+    for dir in [build, dist, egg]:
+        if os.path.exists(dir):
+            shutil.rmtree(dir)
+    print('success\n')
+
+
 @cli.command(name='build')
 @click.option('--initial/--normal', default=False)
 def build_project(initial=False):
@@ -58,11 +68,7 @@ def build_project(initial=False):
             return
 
     # cleanup
-    print(green('Removing old build'))
-    for dir in [build, dist, egg]:
-        if os.path.exists(dir):
-            shutil.rmtree(dir)
-    print('success\n')
+    clean()
 
     # setuptools
     print(green('Running setup.py clean:'))
@@ -95,6 +101,9 @@ def publish():
     print(green('Publishing to PyPI with twine:'))
     subprocess.run(['twine', 'upload', 'dist/*'])
     print()
+
+    # cleanup
+    clean()
 
     print(green('SUCCESSFULLY PUBLISHED {}\n'.format(version)))
 

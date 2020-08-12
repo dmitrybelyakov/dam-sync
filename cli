@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 from dam.cli import cli as dev_cli
+from dam.dam_sync import cli as dam_sync
+
+dev_cli.add_command(dam_sync, 'dam')
 
 # and run
 dev_cli()
