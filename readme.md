@@ -38,7 +38,7 @@ dam-sync run --cloud
 
 ## Installation
 
-This library requires Python3 to rand and is ideal when installed globally. Install it with pip:
+This library requires Python3 to run and is ideal when installed globally. Install it with pip:
 
 ```
 pip install dam-sync
