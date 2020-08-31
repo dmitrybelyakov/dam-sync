@@ -122,7 +122,6 @@ s3_bucket: photoarchivebackup/PHOTO
 aws_profile: my-aws-profile
 exclude:
 - '*.DS_Store'
-- 'CRAP'
 
 ```
 
