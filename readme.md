@@ -99,7 +99,7 @@ You can then tell `dam-sync` to use this profile for backups.
 
 #### Configure dam-sync
 
-Before you start using `dam-sync`, you must make sure you configure it by running:
+Before you start using `dam-sync`, make sure you configure it by running:
 
 ```
 dam-sync configure
