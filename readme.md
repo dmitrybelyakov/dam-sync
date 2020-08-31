@@ -96,3 +96,36 @@ aws_secret_access_key = longer-secret-here
 
 You can then tell `dam-sync` to use this profile for backups.
 
+
+#### Configure dam-sync
+
+Before running, you must make sure you configure `dam-sync` by running:
+
+```
+dam-sync configure
+```
+
+It will ask you a series of questions about location of your asset library, path to your local storage to backup to and the name and access credentials to your S3 bucket, so make sure you have these ready.
+
+After you answer all the questions, `dam-sync` will create a config file in your home directory under:
+
+```
+~/.dam-sync/config.yml
+```
+
+It will contain all your configuration values and you can always come back and edit it, for example, if you want to adjust what files are excluded. Here is an example of such config file:
+
+```yaml
+source: /Users/myhomedirectory/Pictures/PHOTO
+destination: /Volumes/PHOTOBACKUP
+s3_bucket: photoarchivebackup/PHOTO
+aws_profile: my-aws-profile
+exclude:
+- '*.DS_Store'
+- 'CRAP'
+
+```
+
+
+
+
