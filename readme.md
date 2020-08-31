@@ -44,7 +44,7 @@ This library requires Python3 to run and is ideal when installed globally. Insta
 pip install dam-sync
 ```
 
-As it is meant to be installed globally, it has intentionally limited dependencies and doesn not bundle tools that will can interfere with packages/versions installed on your system. Instead, it relies on those packages being present on your system.
+As it is meant to be installed globally, it has intentionally limited dependencies and doesn not bundle tools that can interfere with packages/versions installed on your system. Instead, it relies on those packages being present on your system.
 
 Basically there are only two dependencies: `rsync` and `aws-cli`. Install them both before using this tool. the best way to get them is from [Homebrew](https://brew.sh/)
 
